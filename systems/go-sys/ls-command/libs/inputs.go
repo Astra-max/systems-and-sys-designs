@@ -12,21 +12,20 @@ func TakeCommand() {
 	commands = TrimEmptySpace(commands)
 	onlyComm := CommandQue(commands)
 
-	if len(onlyComm) >= 1 && onlyComm[0] != "ls" && onlyComm[0] != "clear" {
+	if len(onlyComm) >= 1 && onlyComm[0] != "ls" {
 		fmt.Println("[Error]: Invalid command")
 		return
 	}
 
 	dirEntries := FilterDirectory(commands)
 
+
 	if len(dirEntries) == 0 {
 		dirEntries = []string{"."}
 	}
 
 	if onlyComm[0] == "ls" && len(onlyComm) == 1 {
-		for _, dir := range dirEntries {
-			List(dir)
-		}
+		List(".")
 		return
 	}
 
@@ -39,7 +38,6 @@ func TakeCommand() {
 			case "-a":
 				break
 			case "-R":
-				RecursiveList(".")
 				RecursiveList(dir)
 				break
 			case "-t":
@@ -47,6 +45,10 @@ func TakeCommand() {
 			case "-d":
 				break
 			default:
+				info, _ := os.Stat(flag)
+				if info.IsDir() {
+					os.Exit(0)
+				}
 				fmt.Printf("ls: Invalid option -- %v\n", flag)
 				fmt.Println("Try ls man")
 				os.Exit(0)
@@ -77,19 +79,10 @@ func TrimEmptySpace(commands []string) []string {
 }
 
 func CommandQue(instructions []string) []string {
-	cmdQue := make([]string, 1)
+	cmdQue := []string{}
 
-	for _, command := range instructions {
-		switch command {
-		case "-R":
-			getCurr := cmdQue[0]
-			cmdQue = append(cmdQue, getCurr)
-		default:
-			cmdQue = append(cmdQue, command)
-		}
-	}
-	if cmdQue[0] == "" {
-		return cmdQue[1:]
+	for _, flag := range instructions {
+		cmdQue = append(cmdQue, flag)
 	}
 	return cmdQue
 }
@@ -98,7 +91,7 @@ func FilterDirectory(instructions []string) []string {
 	dirList := []string{}
 
 	for i := len(instructions) - 1; i > 0; i-- {
-		if !strings.HasPrefix(instructions[i], "-") {
+		if !strings.HasPrefix(instructions[i], "-") || strings.HasPrefix(instructions[i], ".") {
 			fileInfo, err := os.Stat(instructions[i])
 
 			if err != nil {
@@ -110,6 +103,12 @@ func FilterDirectory(instructions []string) []string {
 				dirList = append(dirList, instructions[i])
 			} else {
 				fmt.Printf("[Error]: %v\n", err)
+			}
+		}
+		fileInfo, err := os.Stat(instructions[i])
+		if err == nil {
+			if fileInfo.IsDir() {
+				dirList = append(dirList, instructions[i])
 			}
 		}
 	}
