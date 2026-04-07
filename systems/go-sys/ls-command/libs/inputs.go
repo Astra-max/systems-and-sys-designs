@@ -10,14 +10,10 @@ import (
 func TakeCommand() {
 	commands := commands()
 	commands = TrimEmptySpace(commands)
+	onlyComm := CommandQue(commands)
 
-	if len(commands) >= 1 && commands[0] != "ls" && commands[0] != "clear" {
+	if len(onlyComm) >= 1 && onlyComm[0] != "ls" && onlyComm[0] != "clear" {
 		fmt.Println("[Error]: Invalid command")
-		return
-	}
-
-	if commands[0] == "ls" && len(commands) == 1 {
-		List(".")
 		return
 	}
 
@@ -27,8 +23,15 @@ func TakeCommand() {
 		dirEntries = []string{"."}
 	}
 
+	if onlyComm[0] == "ls" && len(onlyComm) == 1 {
+		for _, dir := range dirEntries {
+			List(dir)
+		}
+		return
+	}
+
 	for _, dir := range dirEntries {
-		for _, flag := range commands[1:] {
+		for _, flag := range onlyComm[1:] {
 			switch flag {
 			case "-l":
 				LongList(dir)
@@ -36,6 +39,8 @@ func TakeCommand() {
 			case "-a":
 				break
 			case "-R":
+				RecursiveList(".")
+				RecursiveList(dir)
 				break
 			case "-t":
 				break
@@ -82,6 +87,9 @@ func CommandQue(instructions []string) []string {
 		default:
 			cmdQue = append(cmdQue, command)
 		}
+	}
+	if cmdQue[0] == "" {
+		return cmdQue[1:]
 	}
 	return cmdQue
 }
