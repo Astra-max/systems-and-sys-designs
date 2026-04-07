@@ -1,9 +1,9 @@
 package libs
 
 import (
-	"os/user"
-	"ls/util"
 	"fmt"
+	"ls/util"
+	"os/user"
 )
 
 func getHostName() string {
@@ -13,7 +13,7 @@ func getHostName() string {
 		hostName := util.TEST + "[ my-ls ]$ " + util.RESET
 		return hostName
 	}
-	hostName := fmt.Sprintf("%v[~%s~]$%v ", util.TEST,host.Username, util.RESET)
+	hostName := fmt.Sprintf("%v[~%s~]$%v ", util.TEST, host.Username, util.RESET)
 	return hostName
 }
 

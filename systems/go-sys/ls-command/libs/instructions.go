@@ -1,20 +1,13 @@
 package libs
 
 import (
-	"os"
 	"fmt"
 	"ls/util"
+	"os"
 )
 
-
-func List(dir string) {
-	err := os.Chdir(dir)
-	entries, errRead := os.ReadDir(dir)
-
-	if err != nil {
-		fmt.Printf("[Error]: %v\n", err)
-		return
-	}
+func List(directory string) {
+	entries, errRead := os.ReadDir(directory)
 
 	if errRead != nil {
 		fmt.Printf("[Error]: %v\n", errRead)
@@ -22,7 +15,7 @@ func List(dir string) {
 	}
 
 	for _, entry := range entries {
-		dir,err:= entry.Info()
+		dir, err := entry.Info()
 		if err != nil {
 			fmt.Printf("[Error]: %v\n", err)
 			return
@@ -33,20 +26,14 @@ func List(dir string) {
 			fmt.Print(dirName + " ")
 
 		} else {
-			fmt.Print(dir.Name()+ " ")
+			fmt.Print(dir.Name() + " ")
 		}
 	}
 	fmt.Println()
 }
 
-func LongList(dir string) {
-	err := os.Chdir(dir)
-	entries, errRead := os.ReadDir(dir)
-
-	if err != nil {
-		fmt.Printf("[Error]: %v\n", err)
-		return
-	}
+func LongList(directory string) {
+	entries, errRead := os.ReadDir(directory)
 
 	if errRead != nil {
 		fmt.Printf("[Error]: %v\n", errRead)
@@ -54,7 +41,7 @@ func LongList(dir string) {
 	}
 
 	for _, entry := range entries {
-		dir,err:= entry.Info()
+		dir, err := entry.Info()
 		if err != nil {
 			fmt.Printf("[Error]: %v\n", err)
 			return
