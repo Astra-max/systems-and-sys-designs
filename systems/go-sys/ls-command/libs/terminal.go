@@ -1,20 +1,22 @@
 package libs
 
 import (
-	"os"
+	"os/user"
+	"ls/util"
 	"fmt"
 )
 
 func getHostName() string {
-	host := os.Getenv("HostName")
+	host, err := user.Current()
 
-	if host != "" || len(host) == 0 {
-		return "[ simple-ls ]$ "
+	if err != nil {
+		hostName := util.TEST + "[ my-ls ]$ " + util.RESET
+		return hostName
 	}
-	hostName := fmt.Sprintf("[~%s~]$ ", host)
+	hostName := fmt.Sprintf("%v[~%s~]$%v ", util.TEST,host.Username, util.RESET)
 	return hostName
 }
 
-func TerminalInput(hostName string) {
+func TerminalInput() {
 	fmt.Print(getHostName())
 }
